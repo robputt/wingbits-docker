@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  wingbits:
+    image: robputt796/wingbits:latest
+    volumes:
+      - wingbits:/etc/wingbits
+    restart: always
+    cap_add:
+      - SYS_RAWIO
+    devices:
+      - "/dev/bus/usb"
+      - "/dev/ttyACM0"
+    labels:
+      io.balena.features.sysfs: 1
+      io.balena.features.procfs: 1
+
+volumes:
+  wingbits:
