@@ -2,7 +2,7 @@ version: '2'
 
 services:
   wingbits:
-    image: robputt796/wingbits:latest
+    image: ghcr.io/robputt/wingbits-docker:0.1.0
     volumes:
       - wingbits:/etc/wingbits
     restart: always
