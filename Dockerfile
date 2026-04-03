@@ -4,9 +4,6 @@ RUN apt update
 RUN apt install curl -y
 
 COPY install-script.sh install.sh
-COPY start.sh start.sh
-COPY readsb.sh readsb.sh
-COPY wingbits.sh wingbits.sh
 RUN chmod 755 *.sh
 
 RUN mkdir run/readsb
