@@ -1,4 +1,7 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
+
+RUN apt update
+RUN apt install curl -y
 
 COPY install-script.sh install.sh
 COPY start.sh start.sh
@@ -12,4 +15,5 @@ RUN touch /run/readsb/aircraft.binCraft.zst.readsb_tmp
 
 RUN loc="0.0, 0.0" id="cool-color-animal" ./install.sh
 
-ENTRYPOINT ["./start.sh"]
+WORKDIR /etc/wingbits
+ENTRYPOINT ["/usr/local/bin/wingbits", "feeder", "start"]
