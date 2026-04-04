@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd /tmp
+
 apt update -y
 apt install --no-install-recommends --no-install-suggests -y \
     git build-essential debhelper libusb-1.0-0-dev pkg-config fakeroot \
@@ -9,10 +11,8 @@ cd readsb
 export DEB_BUILD_OPTIONS=noddebs
 rm -f ../readsb_*.deb
 dpkg-buildpackage -b -ui -uc -us --build-profiles=rtlsdr
-dpkg -i ../readsb_*.deb -y
+dpkg -i ../readsb_*.deb
 cd /
 
-cp readsb.defaults /etc/default/readsb
-
-source /etc/default/readsb
+source readsb.defaults
 /usr/bin/readsb $RECEIVER_OPTIONS $DECODER_OPTIONS $NET_OPTIONS $JSON_OPTIONS --write-json /run/readsb
