@@ -361,17 +361,7 @@ function sync_time() {
 
 # Add readsb config changes for Wingbits client if not already present
 function wb_readsb_config() {
-	# Check if standard config for Wingbits client is already in readsb file
-	if grep -qE '^[[:space:]]*[^#].*"[^"]*--net-connector localhost,30006,json_out[^"]*"' /etc/default/readsb ; then
-	
-		echo -e "\033[0;32m✓\033[0m   readsb already configured for Wingbits client" | tee -a "$LOG_FILE"
-		
-	else
-		# Add connector to readsb	
-		sed -i.bak 's/NET_OPTIONS="[^"]*/& '"--net-connector localhost,30006,json_out"'/' /etc/default/readsb >> "$LOG_FILE" 2>&1
-				
-		echo -e "\033[0;32m✓\033[0m   Added Wingbits config to readsb config file" | tee -a "$LOG_FILE"
-	fi
+	return 0
 }
 
 
@@ -613,15 +603,7 @@ run_command "Installing librtlsdr-dev if not installed" "apt-get -y install libr
 run_command "Installing python if not installed" "apt-get -y install python3"
 run_command "Installing pip if not installed" "apt-get -y install python3-pip"
 run_command "Installing venv if not installed" "apt-get -y install python3-venv"
-
-
-# Step 3: Download and install readsb and graphs1090
-run_command "Installing readsb (could take up to 15 minutes)" \
-	"curl -sL https://github.com/wiedehopf/adsb-scripts/raw/master/readsb-install.sh | bash"
 	
-# Change readsb service restart to 60sec
-sed -i 's/RestartSec=15/RestartSec=60/' /lib/systemd/system/readsb.service >> "$LOG_FILE" 2>&1
-
 # Add readsb config changes for Wingbits client if not already present
 wb_readsb_config
 beast_readsb_config
