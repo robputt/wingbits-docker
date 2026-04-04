@@ -7,6 +7,7 @@ COPY install-script.sh install.sh
 COPY start.sh start.sh
 COPY readsb.sh readsb.sh
 COPY wingbits.sh wingbits.sh
+COPY readsb.defaults readsb.defaults
 RUN chmod 755 *.sh
 
 RUN mkdir /run/readsb
