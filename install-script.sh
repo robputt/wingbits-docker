@@ -214,15 +214,10 @@ function run_command() {
     ) &
     local pid=$!
 
-    show_loading "${text}" &
-    local spinner_pid=$!
+    printf "${text}"
 
     # Wait for the command to finish
     wait "${pid}"
-
-    # Kill the spinner
-    kill "${spinner_pid}"
-    wait "${spinner_pid}" 2>/dev/null
 
     # Check if the command completed successfully
     if [[ -f /tmp/wingbits.done ]]; then
@@ -320,99 +315,22 @@ function collectd_restart() {
 # Function to change options in the graphs1090 config file
 function graphs1090_config() {
 
-	# Define the file path
-	FILE="/etc/default/graphs1090"
-	
-	# Ensure the file exists
-	if [ ! -f "$FILE" ]; then
-	  echo "File not found: $FILE" >> "$LOG_FILE" 2>&1
-	  return
-	fi
-
-	# Check if the line starting with colorscheme= exists in the file
-	if grep -q "^colorscheme=" "$FILE"; then
-		# If it exists, replace it with the desired line
-		sed -i "s/^colorscheme=.*/colorscheme=dark/" "$FILE"
-	fi
-
-	echo "Updated $FILE to set colorscheme=dark." >> "$LOG_FILE" 2>&1
 }
 
 
 # Function to change options in the tar1090 config file
 function tar1090_config() {
-	
-	file="/usr/local/share/tar1090/html/config.js"
 
-	# Ensure the file exists
-	if [ ! -f "$file" ]; then
-	  echo "File not found: $file"  >> "$LOG_FILE" 2>&1
-	  return
-	fi
-
-	# Use sed to uncomment the specified lines to enable route and share link information
-	sed -i 's|// useRouteAPI = false;|useRouteAPI = true;|' "$file"
-	sed -i 's|// routeApiUrl = "https://api.adsb.lol/api/0/routeset";|routeApiUrl = "https://api.adsb.lol/api/0/routeset";|' "$file"
-	sed -i "s|//shareBaseUrl = 'https://adsb.lol/';|shareBaseUrl = 'https://wingbits.com/map';|" "$file"
-	echo "Modified $file lines:" >> "$LOG_FILE" 2>&1
-	grep "useRouteAPI" "$file" >> "$LOG_FILE" 2>&1
-	grep "routeApiUrl" "$file" >> "$LOG_FILE" 2>&1
-	grep "shareBaseUrl" "$file" >> "$LOG_FILE" 2>&1
 }
 
 
 # Function to change options in the tar1090 script file
 function tar1090_script() {
-	
-	file=$(ls /usr/local/share/tar1090/html/script*)
-
-	# Ensure the file exists
-	if [ ! -f "$file" ]; then
-	  echo "File not found: $file"  >> "$LOG_FILE" 2>&1
-	  return
-	fi
-
-	# Use sed to modify share link to point to flight on wingbits map
-	sed -i "s|shareLink = shareBaseUrl + string;|shareLink = shareBaseUrl + '?flight=' + SelPlanes.map((s) => encodeURIComponent(s.icao)).join(',');|" "$file"
-	sed -i 's|"\\" onclick=\\"copyShareLink(); return false;\\">"|"\\">"|' "$file"
-	sed -i 's|"Copy" + NBSP + "Link"|"WB" + NBSP + "Link"|' "$file"
-	echo "Modified $file lines:" >> "$LOG_FILE" 2>&1
-	grep "?flight" "$file" >> "$LOG_FILE" 2>&1
-	grep "copy_link_text" "$file" >> "$LOG_FILE" 2>&1
 }
 
 
 # Function to add options to readsb config to enable heatmap
 function readsb_heatmap() {
-
-		file="/etc/default/readsb"
-
-		# Options to be added
-		options="--heatmap-dir /var/globe_history --heatmap 30"
-
-		if [ ! -d "/var/globe_history" ]; then
-			mkdir /var/globe_history
-			chown readsb /var/globe_history
-		fi	
-
-		# Check if the file contains a line starting with "JSON_OPTIONS="
-		if grep -q '^JSON_OPTIONS=' "$file"; then
-			# Get the line starting with "JSON_OPTIONS="
-			line=$(grep '^JSON_OPTIONS=' "$file")
-
-			# Check if the options are already present
-			if [[ "$line" != *"$options"* ]]; then
-				# Append options within the quotes
-				new_line=$(echo "$line" | sed "s|\"$| $options\"|")
-				# Use sed to replace the old line with the new line
-				sed -i "s|^JSON_OPTIONS=.*|$new_line|" "$file"
-				echo "Options added successfully - $options" >> "$LOG_FILE" 2>&1
-			else
-				echo "Options are already present - $options" >> "$LOG_FILE" 2>&1
-			fi
-		else
-			echo "No line starting with 'JSON_OPTIONS=' found in $file." >> "$LOG_FILE" 2>&1
-		fi
 }
 
 
@@ -435,32 +353,7 @@ function config_changes() {
 
 
 function sync_time() {
-
-    # Check if the system clock is synchronized
-    is_synchronized() {
-        timedatectl status | grep "System clock synchronized: yes" > /dev/null 2>&1
-    }
-
-    # If the system clock is already synchronized, exit
-    if is_synchronized; then
-        echo "System clock is already synchronized." >> "$LOG_FILE" 2>&1
-        return
-    fi
-
-    echo "System clock is not synchronized. Attempting to synchronize..." | tee -a "$LOG_FILE"
-
-    # Enable NTP to synchronize the system time
-    sudo timedatectl set-ntp true
-
-    # Wait for the time synchronization to complete
-    sleep 5
-
-    # Check again if the synchronization was successful
-    if is_synchronized; then
-        echo "Time synchronized successfully." | tee -a "$LOG_FILE"
-    else
-        echo "Time synchronization failed." | tee -a "$LOG_FILE"
-    fi
+	return 0
 }
 
 
@@ -694,7 +587,6 @@ geosigner_check
 
 # Read in readsb location from command line or input
 read_location
-
 
 # Delete old unused files from previous installs
 del_old_files
