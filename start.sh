@@ -1,6 +1,6 @@
 #!/bin/bash
 # Start the first process
-./readsb.sh &
+# ./readsb.sh &
 
 # Start the second process
 ./wingbits.sh &

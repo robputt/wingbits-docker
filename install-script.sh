@@ -619,9 +619,6 @@ run_command "Installing venv if not installed" "apt-get -y install python3-venv"
 run_command "Installing readsb (could take up to 15 minutes)" \
 	"curl -sL https://github.com/wiedehopf/adsb-scripts/raw/master/readsb-install.sh | bash"
 	
-run_command "Installing graphs1090" \
-	"curl -sL https://github.com/wiedehopf/graphs1090/raw/master/install.sh | bash"
-	
 # Change readsb service restart to 60sec
 sed -i 's/RestartSec=15/RestartSec=60/' /lib/systemd/system/readsb.service >> "$LOG_FILE" 2>&1
 
@@ -639,31 +636,6 @@ setup_wb_client
 
 # Step 5: Various config changes
 config_changes
-
-
-# Step 6: Reload systemd daemon, enable and start services
-run_command "Starting services" \
-  "systemctl daemon-reload" \
-  "systemctl enable wingbits" \
-  "systemctl restart readsb wingbits"
-
-
-# Step 7: Check if services are online
-check_service_status "wingbits" "readsb"
-
-
-# Step 8: Create a cron job to check for updates every day at 6pm
-update_crontab
-
-
-# Step 9: Check and sync time if necessary
-sync_time
-	
-# Step 10: Write GeoSigner ID to device file
-set_device_id
-
-# Step 11: Add/update wb-config if not already installed
-update_wbconfig
 
 
 # Save the new version number now install complete
