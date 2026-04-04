@@ -638,22 +638,6 @@ setup_wb_client
 config_changes
 
 
-# Step 6: Reload systemd daemon, enable and start services
-
-
-# Step 7: Check if services are online
-
-
-# Step 8: Create a cron job to check for updates every day at 6pm
-
-
-# Step 9: Check and sync time if necessary
-	
-# Step 10: Write GeoSigner ID to device file
-
-# Step 11: Add/update wb-config if not already installed
-
-
 # Save the new version number now install complete
 echo "$WINGBITS_CONFIG_VERSION" > /etc/wingbits/version | tee -a "$LOG_FILE"
 echo
