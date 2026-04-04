@@ -314,23 +314,25 @@ function collectd_restart() {
 
 # Function to change options in the graphs1090 config file
 function graphs1090_config() {
-
+	return 0
 }
 
 
 # Function to change options in the tar1090 config file
 function tar1090_config() {
-
+	return 0
 }
 
 
 # Function to change options in the tar1090 script file
 function tar1090_script() {
+	return 0
 }
 
 
 # Function to add options to readsb config to enable heatmap
 function readsb_heatmap() {
+	return 0
 }
 
 
